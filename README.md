@@ -46,7 +46,7 @@ Puppet features are initially set up when creating a new one with New function:
 
   ### Restoring
   
-  - current settings: eyes: brown, skin: dar
+  - current settings: eyes: brown, skin: dark
   - change the eyes and skin features
 	    restoreAll = pup.Options(puppet.SetEyes("green"), puppet.SetSkin("fair"))
   - reset the eyes and skin features back to: eyes: brown, skin: dark
