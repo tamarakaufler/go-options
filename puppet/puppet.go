@@ -74,6 +74,11 @@ func (p *Puppet) Weight() float32 {
 	return p.weight
 }
 
+// Functions provided for feature update.
+// These are applied through the Option or
+// Options methods. They do the feature update
+// and return a closure (for access to the Puppet instance),
+// that, when run, restores the previous value.
 func SetHairColour(c string) option {
 	return func(p *Puppet) option {
 		prevHair := p.hair
@@ -160,9 +165,24 @@ func (p *Puppet) Options(opts ...option) (restore option) {
 	return restore
 }
 
+// Options provides a possibility of a bulk update.
+// It returns a function that restores back all features,
+// that were updated, to values before the update.
+func (p *Puppet) Options2(opts ...option) (restore option) {
+	restores := []option{}
+
+	for _, opt := range opts {
+		restore = opt(p)
+		restores = append(restores, restore)
+	}
+	restore = mergeAll(restores...)
+
+	return restore
+}
+
 // merge runs both the receiver and the argument functions
 // which sets the respective features/fields.
-// The method returns a closure, that does the updating, when run.
+// The method returns a closure, that does a reset to previous values, when run.
 func (opt option) merge(opt2 option) option {
 	return func(p *Puppet) option {
 		// running setting of the option opt
@@ -178,9 +198,9 @@ func (opt option) merge(opt2 option) option {
 	}
 }
 
-// merge runs all argument functions
+// merge runs both argument functions
 // which sets the respective features/fields.
-// The function returns a closure, that does the updating, when run.
+// The function returns a closure, that does a reset to previous values, when run.
 func merge(opt option, opt2 option) option {
 	return func(p *Puppet) option {
 		// running setting of the option opt
@@ -192,6 +212,24 @@ func merge(opt option, opt2 option) option {
 		//     rAll is the closure returned by merge method
 		//		 within which the r and r2 functions are applied
 		rAll := merge(r, r2)
+		return rAll
+	}
+}
+
+// mergeAll runs all argument functions
+// which sets the respective features/fields. The returned
+// restore functions are gathered and used when returning  a closure,
+// that does a reset to previous values, when run.
+func mergeAll(opts ...option) option {
+	return func(p *Puppet) option {
+		restores := []option{}
+		for _, opt := range opts {
+			restores = append(restores, opt(p))
+		}
+		// a new restore function is returned
+		//     rAll is the closure returned by mergeAll function
+		//		 within which all restore functions are applied
+		rAll := mergeAll(restores...)
 		return rAll
 	}
 }

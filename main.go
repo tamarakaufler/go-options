@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"time"
 
 	"github.com/tamarakaufler/go-options/puppet"
 )
@@ -49,7 +51,14 @@ func main() {
 	restoreAll = pup.Options(restoreAll)
 	fmt.Printf("<< Eyes: %s, skin: %s\n", pup.Eyes(), pup.Skin())
 
+	start := time.Now()
 	restoreAll = pup.Options(restoreAll)
+	log.Printf("Options took %s\n", time.Since(start))
 	fmt.Printf("<< Eyes: %s, skin: %s\n", pup.Eyes(), pup.Skin())
+
+	start = time.Now()
+	restoreAll = pup.Options2(restoreAll)
+	log.Printf("Options2 took %s\n", time.Since(start))
+	fmt.Printf("== Eyes: %s, skin: %s\n", pup.Eyes(), pup.Skin())
 
 }
