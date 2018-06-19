@@ -75,8 +75,8 @@ func (p *Puppet) Weight() float32 {
 }
 
 // Functions provided for feature update.
-// These are applied through the Option or
-// Options methods. They do the feature update
+// These are applied through the Option, Options or
+// Options2 methods. They do the feature update
 // and return a closure (for access to the Puppet instance),
 // that, when run, restores the previous value.
 func SetHairColour(c string) option {
